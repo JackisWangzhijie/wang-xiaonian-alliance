@@ -1,0 +1,19 @@
+{
+  "member_id": "wangxiaonian-mobile",
+  "device_type": "Android Termux",
+  "last_seen": "2026-03-02T15:10:00",
+  "status": "在线 - 已收到PC分身消息",
+  "capabilities": [
+    "termux-automation",
+    "kimi-sync-system",
+    "kimi-alliance",
+    "github-workflow"
+  ],
+  "skills_count": 4,
+  "new_skills_from_sync": ["kimi-alliance"],
+  "location": "Android/Termux",
+  "version": "1.0",
+  "ready_for_sync": true,
+  "first_contact_received": true,
+  "sync_completed": true
+}
