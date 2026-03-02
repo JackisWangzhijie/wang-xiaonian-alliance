@@ -1,0 +1,149 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# 王小年智能提醒系统
+# 利用 Android 系统闹钟 + Termux 通知
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+show_help() {
+    echo "⏰ 王小年智能提醒系统"
+    echo ""
+    echo "用法: smart-reminder <命令> [参数]"
+    echo ""
+    echo "命令:"
+    echo "  stock-daily           设置股票交易日提醒 (9:25开盘, 14:50收盘)"
+    echo "  alarm <时间> [标签]   设置单次闹钟 (如: 08:30 起床)"
+    echo "  timer <分钟> [标签]   设置倒计时 (如: 25 番茄钟)"
+    echo "  list                  列出所有闹钟"
+    echo "  clear                 清除所有闹钟"
+    echo "  notify <标题> <内容>  立即发送通知"
+    echo ""
+    echo "示例:"
+    echo "  smart-reminder stock-daily     # 自动设置交易日闹钟"
+    echo "  smart-reminder alarm 09:00 早会 # 设置9点闹钟"
+    echo "  smart-reminder timer 25 休息   # 25分钟后提醒"
+    echo ""
+}
+
+# 设置股票交易提醒
+set_stock_reminders() {
+    echo "📈 正在设置股票交易日提醒..."
+    
+    # 使用 termux-clock 设置系统闹钟
+    # 开盘提醒 9:25
+    termux-clock alarm --hours 9 --minutes 25 --label "📈 开盘选股-王小年" 2>/dev/null && \
+        echo "✅ 9:25 开盘提醒已设置" || \
+        echo "⚠️  9:25 提醒设置失败，尝试备用方案..."
+    
+    # 收盘提醒 14:50
+    termux-clock alarm --hours 14 --minutes 50 --label "📉 收盘卖出-王小年" 2>/dev/null && \
+        echo "✅ 14:50 收盘提醒已设置" || \
+        echo "⚠️  14:50 提醒设置失败"
+    
+    # 同时发送一个测试通知
+    termux-notification \
+        --title "⏰ 提醒已设置" \
+        --content "已设置工作日 9:25 和 14:50 的交易提醒" \
+        --priority default
+    
+    echo ""
+    echo "提示: 闹钟将在系统时钟应用中显示"
+    echo "你可以手动调整或删除它们"
+}
+
+# 设置单次闹钟
+set_alarm() {
+    local time="$1"
+    local label="${2:-王小年提醒}"
+    
+    if [ -z "$time" ]; then
+        echo "❌ 请提供时间，如: 08:30"
+        return 1
+    fi
+    
+    # 解析时间
+    local hour=$(echo "$time" | cut -d: -f1)
+    local minute=$(echo "$time" | cut -d: -f2)
+    
+    termux-clock alarm --hours "$hour" --minutes "$minute" --label "$label" && \
+        echo "✅ 闹钟已设置: $time - $label" || \
+        echo "❌ 设置失败"
+}
+
+# 设置倒计时
+set_timer() {
+    local minutes="$1"
+    local label="${2:-倒计时结束}"
+    
+    if [ -z "$minutes" ]; then
+        echo "❌ 请提供分钟数"
+        return 1
+    fi
+    
+    termux-clock timer --minutes "$minutes" --label "$label" && \
+        echo "✅ 倒计时已设置: $minutes 分钟后 - $label" || \
+        echo "❌ 设置失败"
+}
+
+# 列出闹钟
+list_alarms() {
+    echo "📋 当前设置的闹钟:"
+    echo "(需要在 Android 时钟应用中查看详细列表)"
+    echo ""
+    
+    # 尝试通过 am 命令获取
+    am list-alarms 2>/dev/null || echo "请打开系统时钟应用查看"
+}
+
+# 清除闹钟
+clear_alarms() {
+    echo "⚠️  请在 Android 时钟应用中手动删除闹钟"
+    echo "位置: 时钟 > 闹钟 > 选择要删除的闹钟"
+}
+
+# 发送即时通知
+send_notify() {
+    local title="$1"
+    local content="$2"
+    
+    if [ -z "$title" ]; then
+        title="📢 王小年提醒"
+    fi
+    
+    if [ -z "$content" ]; then
+        content="你有一条新消息"
+    fi
+    
+    termux-notification \
+        --title "$title" \
+        --content "$content" \
+        --priority high \
+        --button1 "打开Termux" \
+        --button1-action "termux-open --working-directory ~/kimi-workspace"
+    
+    echo "✅ 通知已发送: $title - $content"
+}
+
+# 主逻辑
+case "$1" in
+    stock-daily)
+        set_stock_reminders
+        ;;
+    alarm)
+        set_alarm "$2" "$3"
+        ;;
+    timer)
+        set_timer "$2" "$3"
+        ;;
+    list)
+        list_alarms
+        ;;
+    clear)
+        clear_alarms
+        ;;
+    notify)
+        send_notify "$2" "$3"
+        ;;
+    *)
+        show_help
+        ;;
+esac

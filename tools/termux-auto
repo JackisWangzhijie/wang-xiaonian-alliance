@@ -1,0 +1,124 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# 王小年 Termux 自动化管理工具
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+LOG_DIR="$HOME/kimi-workspace/logs"
+CRON_DIR="$HOME/kimi-workspace/cron"
+
+show_help() {
+    echo "🤖 王小年 Termux 自动化管理工具"
+    echo ""
+    echo "用法: termux-auto <命令>"
+    echo ""
+    echo "命令:"
+    echo "  status      查看自动化服务状态"
+    echo "  start       启动 cron 服务"
+    echo "  stop        停止 cron 服务"
+    echo "  notify      测试通知功能"
+    echo "  report      立即发送交易日报"
+    echo "  open        发送开盘提醒"
+    echo "  close       发送收盘提醒"
+    echo "  log         查看运行日志"
+    echo "  edit        编辑定时任务"
+    echo "  enable-boot 启用开机自启"
+    echo "  disable-boot 禁用开机自启"
+    echo ""
+}
+
+show_status() {
+    echo "=================================="
+    echo "🤖 王小年自动化服务状态"
+    echo "=================================="
+    echo ""
+    
+    # Cron 状态
+    if pgrep -x "crond" > /dev/null; then
+        echo "✅ Cron 服务: 运行中"
+    else
+        echo "❌ Cron 服务: 未运行"
+    fi
+    
+    # 定时任务
+    echo ""
+    echo "📅 定时任务:"
+    crontab -l 2>/dev/null | grep -v "^#" | grep -v "^$" || echo "  (无定时任务)"
+    
+    # 开机自启
+    echo ""
+    if [ -f "$HOME/.termux/boot/startup.sh" ]; then
+        echo "✅ 开机自启: 已启用"
+    else
+        echo "❌ 开机自启: 未启用"
+    fi
+    
+    # 日志文件
+    echo ""
+    echo "📁 日志文件:"
+    ls -lh "$LOG_DIR"/*.log 2>/dev/null | awk '{print "  " $9 " (" $5 ")"}' || echo "  (暂无日志)"
+    
+    echo ""
+    echo "=================================="
+}
+
+case "$1" in
+    status)
+        show_status
+        ;;
+    start)
+        crond
+        echo "✅ Cron 服务已启动"
+        ;;
+    stop)
+        pkill crond
+        echo "✅ Cron 服务已停止"
+        ;;
+    notify)
+        termux-notification \
+            --title "🧪 测试通知" \
+            --content "王小年的 Termux 自动化工作正常！" \
+            --priority high
+        echo "✅ 测试通知已发送"
+        ;;
+    report)
+        "$CRON_DIR/auto_report.sh"
+        echo "✅ 日报已发送"
+        ;;
+    open)
+        "$CRON_DIR/notify_open.sh"
+        echo "✅ 开盘提醒已发送"
+        ;;
+    close)
+        "$CRON_DIR/notify_close.sh"
+        echo "✅ 收盘提醒已发送"
+        ;;
+    log)
+        if [ -f "$LOG_DIR/cron.log" ]; then
+            echo "=== 最近 20 条日志 ==="
+            tail -20 "$LOG_DIR/cron.log"
+        else
+            echo "暂无日志文件"
+        fi
+        ;;
+    edit)
+        crontab -e
+        ;;
+    enable-boot)
+        mkdir -p "$HOME/.termux/boot"
+        cat > "$HOME/.termux/boot/startup.sh" << 'EOF'
+#!/data/data/com.termux/files/usr/bin/sh
+crond
+termux-wake-lock
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] 王小年已启动" >> ~/kimi-workspace/logs/boot.log
+EOF
+        chmod +x "$HOME/.termux/boot/startup.sh"
+        echo "✅ 开机自启已启用"
+        echo "提示: 需要安装 Termux:Boot 插件才能生效"
+        ;;
+    disable-boot)
+        rm -f "$HOME/.termux/boot/startup.sh"
+        echo "✅ 开机自启已禁用"
+        ;;
+    *)
+        show_help
+        ;;
+esac

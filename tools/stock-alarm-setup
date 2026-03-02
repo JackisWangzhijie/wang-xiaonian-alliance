@@ -1,0 +1,72 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# 股票交易提醒设置助手
+# 引导用户在系统时钟中快速设置闹钟
+
+echo "=================================="
+echo "📈 王小年股票交易提醒设置"
+echo "=================================="
+echo ""
+
+# 方式1: 尝试打开时钟应用 (不设置闹钟，只打开应用)
+echo "正在打开系统时钟应用..."
+termux-open -a com.android.deskclock 2>/dev/null || \
+termux-open -a com.google.android.deskclock 2>/dev/null || \
+termux-open -a com.hihonor.deskclock 2>/dev/null || \
+echo "请手动打开时钟应用"
+
+# 发送设置指南通知
+termux-notification \
+    --title "⏰ 请设置以下闹钟" \
+    --content "1. 9:25 📈 开盘选股  2. 14:50 📉 收盘卖出" \
+    --priority high \
+    --button1 "打开时钟" \
+    --button1-action "termux-open -a com.android.deskclock" \
+    --button2 "查看详情" \
+    --button2-action "termux-open ~/kimi-workspace/docs/alarm-setup-guide.txt"
+
+echo ""
+echo "📱 请在打开的时钟应用中设置以下闹钟:"
+echo ""
+echo "┌─────────────────────────────────────┐"
+echo "│  ⏰ 闹钟 1: 09:25                   │"
+echo "│     标签: 📈 开盘选股-王小年        │"
+echo "│     重复: 周一至周五                │"
+echo "│                                     │"
+echo "│  ⏰ 闹钟 2: 14:50                   │"
+echo "│     标签: 📉 收盘卖出-王小年        │"
+echo "│     重复: 周一至周五                │"
+echo "└─────────────────────────────────────┘"
+echo ""
+echo "设置完成后，闹钟会在每个交易日提醒你!"
+echo "=================================="
+
+# 同时创建一个设置指南文件
+mkdir -p ~/kimi-workspace/docs
+cat > ~/kimi-workspace/docs/alarm-setup-guide.txt << 'EOF'
+王小年股票交易闹钟设置指南
+================================
+
+📈 开盘提醒: 9:25
+- 目的: 提醒进行选股和买入操作
+- 操作: 查看今日推荐股票，执行买入
+
+📉 收盘提醒: 14:50
+- 目的: 提醒在收盘前卖出持仓
+- 操作: 卖出所有持仓，记录当日盈亏
+
+设置步骤:
+1. 打开 Android 时钟应用
+2. 点击"+"添加新闹钟
+3. 设置时间为 9:25
+4. 输入标签: "开盘选股-王小年"
+5. 选择重复: 周一到周五
+6. 保存
+7. 重复步骤2-6，设置 14:50 的闹钟
+
+提示:
+- 建议设置提前1分钟的提醒，给自己准备时间
+- 可以把闹钟铃声设为特别的，一听就知道是交易提醒
+- 关闭周末提醒，只保留工作日
+
+祝交易顺利! 💰
+EOF

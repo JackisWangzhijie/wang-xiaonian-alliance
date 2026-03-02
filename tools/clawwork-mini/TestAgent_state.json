@@ -1,0 +1,134 @@
+{
+  "state": {
+    "balance": 52.02954,
+    "total_income": 42.03,
+    "total_cost": 0.00046000000000000007,
+    "tasks_completed": 1,
+    "tasks_failed": 0,
+    "days_survived": 0,
+    "start_time": "2026-03-02T05:04:30.909952",
+    "status": "active"
+  },
+  "history": [
+    {
+      "time": "2026-03-02T05:04:30.910208",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 5,
+        "cost": 0.0001,
+        "balance": 10.0
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:30.910558",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 5,
+        "cost": 0.0001,
+        "balance": 10.0
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:30.910746",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 5,
+        "cost": 0.0001,
+        "balance": 10.0
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:31.011770",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 5,
+        "cost": 0.0001,
+        "balance": 10.0
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:31.113899",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 5,
+        "cost": 0.0001,
+        "balance": 10.0
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:31.215754",
+      "type": "earn",
+      "data": {
+        "task_id": "task_002",
+        "amount": 42.03,
+        "quality": 0.76,
+        "balance": 52.03
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:31.720745",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 5,
+        "cost": 0.0001,
+        "balance": 52.03
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:31.722148",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 4,
+        "cost": 0.0,
+        "balance": 52.03
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:31.722858",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 2,
+        "cost": 0.0,
+        "balance": 52.03
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:32.224304",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 5,
+        "cost": 0.0001,
+        "balance": 52.03
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:32.225760",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 3,
+        "cost": 0.0,
+        "balance": 52.03
+      }
+    },
+    {
+      "time": "2026-03-02T05:04:32.226644",
+      "type": "charge",
+      "data": {
+        "operation": "thinking",
+        "tokens": 2,
+        "cost": 0.0,
+        "balance": 52.03
+      }
+    }
+  ]
+}
