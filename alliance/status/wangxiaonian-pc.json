@@ -1,8 +1,8 @@
 {
   "member_id": "wangxiaonian-pc",
   "device_type": "Windows PC",
-  "last_seen": "2026-03-02T14:50:00",
-  "status": "在线 - 等待与 Mobile 分身同步",
+  "last_seen": "2026-03-02T15:05:00",
+  "status": "在线 - 已与Mobile分身同步",
   "capabilities": [
     "windows-automation",
     "kimi-sync-system",
@@ -11,11 +11,13 @@
     "trading-sim",
     "clawwork",
     "ims",
-    "mcp"
+    "github-workflow"
   ],
   "skills_count": 62,
+  "new_skills_from_sync": ["github-workflow"],
   "location": "Windows 10 PC",
   "version": "1.0",
   "ready_for_sync": true,
-  "first_contact_sent": true
+  "first_contact_sent": true,
+  "sync_completed": true
 }
