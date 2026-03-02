@@ -1,0 +1,14 @@
+# 忽略敏感信息
+*.token
+*.key
+.env
+.openclaw/
+
+# 忽略大文件
+*.tar.gz
+*.zip
+
+# 忽略日志
+logs/*.log
+__pycache__/
+*.pyc
