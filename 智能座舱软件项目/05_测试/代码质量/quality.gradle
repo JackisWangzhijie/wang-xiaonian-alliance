@@ -1,0 +1,297 @@
+// ============================================================
+// 智能座舱主交互系统 - 质量检查Gradle配置
+// ASPICE Level 3 合规配置
+// ============================================================
+
+apply plugin: 'jacoco'
+apply plugin: 'io.gitlab.arturbosch.detekt'
+
+// ============================================================
+// 测试覆盖率配置
+// ============================================================
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.withType(Test) {
+    jacoco {
+        includeNoLocationClasses = true
+        excludes = ['jdk.internal.*']
+    }
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports"
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    def fileFilter = [
+        '**/R.class',
+        '**/R$*.class',
+        '**/BuildConfig.*',
+        '**/Manifest*.*',
+        '**/*Test*.*',
+        'android/**/*.*',
+        '**/di/**/*.*',
+        '**/*Module*.*',
+        '**/*Application*.*',
+        '**/*Activity*.*',
+        '**/*Fragment*.*',
+        '**/model/**/*.*',
+        '**/entity/**/*.*'
+    ]
+
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug", excludes: fileFilter)
+    def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories.setFrom(files([mainSrc]))
+    classDirectories.setFrom(files([debugTree], [kotlinDebugTree]))
+    executionData.setFrom(fileTree(dir: buildDir, includes: [
+        'jacoco/testDebugUnitTest.exec',
+        'outputs/code_coverage/debugAndroidTest/connected/**/*.ec'
+    ]))
+}
+
+// ============================================================
+// 覆盖率验证任务
+// ============================================================
+task jacocoTestCoverageVerification(type: JacocoCoverageVerification, dependsOn: 'jacocoTestReport') {
+    group = "Verification"
+    description = "Verify code coverage meets ASPICE requirements"
+
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.80  // 单元测试覆盖率 ≥80%
+            }
+        }
+        
+        // 关键路径代码覆盖率 ≥90%
+        rule {
+            element = 'CLASS'
+            includes = [
+                'com.longcheer.cockpit.message.service.DrivingSafetyController',
+                'com.longcheer.cockpit.message.service.MessagePopupManager',
+                'com.longcheer.cockpit.fwk.lifecycle.AppLifecycleManager',
+                'com.longcheer.cockpit.fwk.dock.DockViewModel',
+                'com.longcheer.cockpit.vehicle.RestrictionManager'
+            ]
+            limit {
+                counter = 'LINE'
+                minimum = 0.90
+            }
+        }
+        
+        // 分支覆盖率要求
+        rule {
+            limit {
+                counter = 'BRANCH'
+                minimum = 0.70
+            }
+        }
+    }
+}
+
+// ============================================================
+// Detekt 静态代码分析配置
+// ============================================================
+detekt {
+    config = files("$rootDir/config/detekt-config.yml")
+    baseline = file("$rootDir/config/detekt-baseline.xml")
+    
+    reports {
+        html {
+            enabled = true
+            destination = file("${buildDir}/reports/detekt/detekt.html")
+        }
+        xml {
+            enabled = true
+            destination = file("${buildDir}/reports/detekt/detekt.xml")
+        }
+        sarif {
+            enabled = true
+            destination = file("${buildDir}/reports/detekt/detekt.sarif")
+        }
+    }
+}
+
+tasks.named("detekt").configure {
+    group = "verification"
+    description = "Run Detekt static analysis"
+    
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+        txt.required.set(true)
+    }
+}
+
+// ============================================================
+// Android Lint 配置
+// ============================================================
+android {
+    lint {
+        lintConfig = file("$rootDir/config/lint.xml")
+        baseline = file("$rootDir/config/lint-baseline.xml")
+        
+        // 将严重警告视为错误
+        warningsAsErrors true
+        
+        // 禁用检查
+        disable 'UnusedResources', 'IconMissingDensityFolder'
+        
+        // 启用额外检查
+        enable 'RtlHardcoded', 'RtlCompat', 'RtlEnabled'
+        
+        // 报告配置
+        xmlReport true
+        htmlReport true
+        sarifReport true
+        
+        // 文本报告
+        textReport true
+        textOutput file("${buildDir}/reports/lint/lint-results.txt")
+    }
+}
+
+// ============================================================
+// 代码风格检查 (Ktlint)
+// ============================================================
+configurations {
+    ktlint
+}
+
+dependencies {
+    ktlint("com.pinterest.ktlint:ktlint-cli:1.0.1") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
+        }
+    }
+}
+
+task ktlintCheck(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style"
+    classpath = configurations.ktlint
+    mainClass.set("com.pinterest.ktlint.Main")
+    args "src/**/*.kt", "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/reports/ktlint/ktlint-checkstyle.xml"
+}
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations"
+    classpath = configurations.ktlint
+    mainClass.set("com.pinterest.ktlint.Main")
+    args "-F", "src/**/*.kt"
+}
+
+// ============================================================
+// 质量门禁任务
+// ============================================================
+task qualityGate {
+    group = "Verification"
+    description = "Run all quality checks (ASPICE compliant)"
+    
+    dependsOn 'ktlintCheck'
+    dependsOn 'detekt'
+    dependsOn 'lintDebug'
+    dependsOn 'jacocoTestReport'
+    dependsOn 'jacocoTestCoverageVerification'
+}
+
+// ============================================================
+// 预提交检查任务
+// ============================================================
+task preCommitCheck {
+    group = "Verification"
+    description = "Fast quality checks for pre-commit"
+    
+    dependsOn 'ktlintCheck'
+    dependsOn 'detekt'
+    dependsOn 'testDebugUnitTest'
+}
+
+// ============================================================
+// 合并前检查任务
+// ============================================================
+task preMergeCheck {
+    group = "Verification"
+    description = "Full quality checks before merge (CI/CD)"
+    
+    dependsOn 'qualityGate'
+}
+
+// ============================================================
+// 质量报告聚合
+// ============================================================
+task aggregateQualityReports {
+    group = "Reporting"
+    description = "Aggregate all quality reports into single HTML"
+    
+    doLast {
+        def reportsDir = file("${buildDir}/reports/quality")
+        reportsDir.mkdirs()
+        
+        def indexHtml = file("${reportsDir}/index.html")
+        indexHtml.text = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>智能座舱 - 质量报告总览</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+        .warning { color: orange; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>智能座舱主交互系统 - 质量报告总览</h1>
+    <p>生成时间: ${new Date()}</p>
+    <p>ASPICE Level 3 合规检查</p>
+    
+    <h2>质量检查项</h2>
+    <table>
+        <tr>
+            <th>检查项</th>
+            <th>目标</th>
+            <th>报告链接</th>
+        </tr>
+        <tr>
+            <td>单元测试覆盖率</td>
+            <td>≥80%</td>
+            <td><a href="jacoco/index.html">查看报告</a></td>
+        </tr>
+        <tr>
+            <td>静态代码分析 (Detekt)</td>
+            <td>0严重/高危</td>
+            <td><a href="detekt/detekt.html">查看报告</a></td>
+        </tr>
+        <tr>
+            <td>Android Lint</td>
+            <td>0严重错误</td>
+            <td><a href="lint/lint-results.html">查看报告</a></td>
+        </tr>
+        <tr>
+            <td>代码风格 (Ktlint)</td>
+            <td>0违规</td>
+            <td><a href="ktlint/ktlint-checkstyle.xml">查看报告</a></td>
+        </tr>
+    </table>
+</body>
+</html>
+        """
+        
+        println("Quality reports aggregated at: ${indexHtml.absolutePath}")
+    }
+}
+
+aggregateQualityReports.dependsOn 'qualityGate'

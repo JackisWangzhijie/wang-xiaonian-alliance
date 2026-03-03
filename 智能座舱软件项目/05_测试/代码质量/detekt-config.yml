@@ -1,0 +1,513 @@
+# ============================================================
+# Detekt 静态代码分析配置
+# 智能座舱主交互系统 - ASPICE Level 3 合规
+# ============================================================
+
+config:
+  validation: true
+  warningsAsErrors: true
+  checkExhaustiveness: false
+
+# ============================================================
+# 代码复杂度规则 (ASPICE要求: Cyclomatic ≤10)
+# ============================================================
+complexity:
+  active: true
+  
+  # 循环复杂度 - ASPICE要求 ≤10
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 10
+    ignoreSingleWhenExpression: false
+    ignoreSimpleWhenEntries: false
+    ignoreNestingFunctions: false
+    nestingFunctions:
+      - also
+      - apply
+      - forEach
+      - isNotNull
+      - ifNull
+      - let
+      - run
+      - use
+      - with
+    
+  # 认知复杂度 - 辅助指标
+  CognitiveComplexMethod:
+    active: true
+    threshold: 15
+    
+  # 复杂条件
+  ComplexCondition:
+    active: true
+    threshold: 4
+    
+  # 复杂接口
+  ComplexInterface:
+    active: true
+    threshold: 10
+    includeStaticDeclarations: false
+    includePrivateDeclarations: false
+    
+  # 方法行数限制
+  LongMethod:
+    active: true
+    threshold: 60
+    
+  # 类行数限制
+  LongParameterList:
+    active: true
+    functionThreshold: 6
+    constructorThreshold: 7
+    ignoreDefaultParameters: false
+    ignoreDataClasses: true
+    ignoreAnnotatedParameter: []
+    
+  # 嵌套块深度
+  NestedBlockDepth:
+    active: true
+    threshold: 4
+    
+  # 字符串模板复杂度
+  StringLiteralDuplication:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    threshold: 3
+    ignoreAnnotation: true
+    excludeStringsWithLessThan5Characters: true
+    ignoreStringsRegex: '$^'
+    
+  # 方法数量
+  TooManyFunctions:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    thresholdInFiles: 11
+    thresholdInClasses: 11
+    thresholdInInterfaces: 11
+    thresholdInObjects: 11
+    thresholdInEnums: 11
+    ignoreDeprecated: false
+    ignorePrivate: false
+    ignoreOverridden: false
+    
+  # 大括号嵌套
+  LargeClass:
+    active: true
+    threshold: 600
+
+# ============================================================
+# 协程规则 (重要：智能座舱大量使用协程)
+# ============================================================
+coroutines:
+  active: true
+  
+  GlobalCoroutineUsage:
+    active: true
+    
+  RedundantSuspendModifier:
+    active: true
+    
+  SleepInsteadOfDelay:
+    active: true
+    
+  SuspendFunWithCoroutineScopeReceiver:
+    active: true
+    
+  SuspendFunWithFlowReturnType:
+    active: true
+
+# ============================================================
+# 空安全规则
+# ============================================================
+potential-bugs:
+  active: true
+  
+  Deprecation:
+    active: true
+    
+  DuplicateCaseInWhenExpression:
+    active: true
+    
+  EqualsAlwaysReturnsTrueOrFalse:
+    active: true
+    
+  EqualsWithHashCodeExist:
+    active: true
+    
+  ExplicitGarbageCollectionCall:
+    active: true
+    
+  HasPlatformType:
+    active: true
+    
+  ImplicitDefaultLocale:
+    active: true
+    
+  InvalidRange:
+    active: true
+    
+  IteratorHasNextCallsNextMethod:
+    active: true
+    
+  IteratorNotThrowingNoSuchElementException:
+    active: true
+    
+  LateinitUsage:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludeAnnotatedProperties: []
+    ignoreOnClassesPattern: ''
+    
+  MapGetWithNotNullAssertionOperator:
+    active: true
+    
+  MissingPackageDeclaration:
+    active: true
+    
+  MissingWhenCase:
+    active: true
+    
+  NullCheckOnMutableProperty:
+    active: true
+    
+  NullableToStringCall:
+    active: true
+    
+  UnconditionalJumpStatementInLoop:
+    active: true
+    
+  UnnecessaryNotNullOperator:
+    active: true
+    
+  UnnecessarySafeCall:
+    active: true
+    
+  UnreachableCatchBlock:
+    active: true
+    
+  UnreachableCode:
+    active: true
+    
+  UnsafeCallOnNullableType:
+    active: true
+    
+  UnsafeCast:
+    active: true
+    
+  UselessPostfixExpression:
+    active: true
+
+# ============================================================
+# 代码风格规则
+# ============================================================
+style:
+  active: true
+  
+  # 允许使用大写常量命名
+  ObjectPropertyNaming:
+    active: true
+    constantPattern: '[A-Za-z][_A-Za-z0-9]*'
+    propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
+    privatePropertyPattern: '(_)?[A-Za-z][_A-Za-z0-9]*'
+    
+  # 禁用魔法数字检查（允许在业务代码中使用）
+  MagicNumber:
+    active: false
+    
+  # 函数命名
+  FunctionNaming:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    functionPattern: '[a-z][a-zA-Z0-9]*'
+    excludeFunctionPattern: '$^'
+    ignoreOverridden: true
+    ignoreAnnotated: ['Composable']
+    
+  # 类命名
+  ClassNaming:
+    active: true
+    classPattern: '[A-Z$][a-zA-Z0-9$]*'
+    
+  # 构造函数参数命名
+  ConstructorParameterNaming:
+    active: true
+    parameterPattern: '[a-z][A-Za-z0-9]*'
+    privateParameterPattern: '[a-z][A-Za-z0-9]*'
+    excludeClassPattern: '$^'
+    
+  # 枚举命名
+  EnumNaming:
+    active: true
+    enumEntryPattern: '^[A-Z][_a-zA-Z0-9]*$'
+    
+  # 包命名
+  PackageNaming:
+    active: true
+    packagePattern: '^[a-z]+(\.[a-z][A-Za-z0-9]*)*$'
+    
+  # 顶层属性命名
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '[A-Z][_A-Z0-9]*'
+    propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
+    privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
+    
+  # 变量命名
+  VariableNaming:
+    active: true
+    variablePattern: '[a-z][A-Za-z0-9]*'
+    privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
+    excludeClassPattern: '$^'
+    
+  # 未使用的导入
+  UnusedImports:
+    active: true
+    
+  # 通配符导入
+  WildcardImport:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludeImports: [
+      'java.util.*',
+      'kotlinx.android.synthetic.*',
+      'kotlinx.coroutines.*'
+    ]
+    
+  # 无 else when
+  MandatoryBracesIfStatements:
+    active: true
+    
+  # 简化表达式
+  CanBeNonNullable:
+    active: true
+    
+  # 数据类复制
+  DataClassShouldBeImmutable:
+    active: true
+    
+  # 默认规则
+  UseCheckOrError:
+    active: true
+    
+  UseIfInsteadOfWhen:
+    active: true
+    
+  UseRequire:
+    active: true
+    
+  UseRequireNotNull:
+    active: true
+    
+  # 注释格式
+  CommentOverPrivateFunction:
+    active: true
+    
+  CommentOverPrivateProperty:
+    active: true
+    
+  # 文档
+  UndocumentedPublicClass:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    searchInNestedClass: true
+    searchInInnerClass: true
+    searchInInnerObject: true
+    searchInInnerInterface: true
+    
+  UndocumentedPublicFunction:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+
+# ============================================================
+# 性能规则
+# ============================================================
+performance:
+  active: true
+  
+  ArrayPrimitive:
+    active: true
+    
+  CouldBeSequence:
+    active: true
+    threshold: 3
+    
+  ForEachOnRange:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    
+  SpreadOperator:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    
+  UnnecessaryTemporaryInstantiation:
+    active: true
+    
+  UnnecessaryPartOfBinaryExpression:
+    active: true
+
+# ============================================================
+# 异常规则
+# ============================================================
+exceptions:
+  active: true
+  
+  ExceptionRaisedInUnexpectedLocation:
+    active: true
+    methodNames:
+      - 'equals'
+      - 'finalize'
+      - 'hashCode'
+      - 'toString'
+      
+  InstanceOfCheckForException:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    
+  NotImplementedDeclaration:
+    active: true
+    
+  PrintStackTrace:
+    active: true
+    
+  RethrowCaughtException:
+    active: true
+    
+  ReturnFromFinally:
+    active: true
+    ignoreLabeled: false
+    
+  SwallowedException:
+    active: true
+    ignoredExceptionTypes:
+      - 'InterruptedException'
+      - 'MalformedURLException'
+      - 'NumberFormatException'
+      - 'ParseException'
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
+    
+  ThrowingExceptionFromFinally:
+    active: true
+    
+  ThrowingExceptionInMain:
+    active: true
+    
+  ThrowingExceptionsWithoutMessageOrCause:
+    active: true
+    exceptions:
+      - 'ArrayIndexOutOfBoundsException'
+      - 'Error'
+      - 'Exception'
+      - 'IllegalArgumentException'
+      - 'IllegalMonitorStateException'
+      - 'IllegalStateException'
+      - 'IndexOutOfBoundsException'
+      - 'NullPointerException'
+      - 'RuntimeException'
+      - 'Throwable'
+      
+  ThrowingNewInstanceOfSameException:
+    active: true
+    
+  TooGenericExceptionCaught:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    exceptionNames:
+      - 'ArrayIndexOutOfBoundsException'
+      - 'Error'
+      - 'Exception'
+      - 'IllegalMonitorStateException'
+      - 'IndexOutOfBoundsException'
+      - 'NullPointerException'
+      - 'RuntimeException'
+      - 'Throwable'
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
+    
+  TooGenericExceptionThrown:
+    active: true
+    exceptionNames:
+      - 'Error'
+      - 'Exception'
+      - 'RuntimeException'
+      - 'Throwable'
+
+# ============================================================
+# 命名规则
+# ============================================================
+naming:
+  active: true
+  
+  BooleanPropertyNaming:
+    active: true
+    allowedPattern: '^(is|has|are|should|can)'
+    
+  FunctionMaxLength:
+    active: true
+    maximumFunctionNameLength: 50
+    
+  FunctionMinLength:
+    active: true
+    minimumFunctionNameLength: 3
+    
+  LambdaParameterNaming:
+    active: true
+    parameterPattern: '[a-z][A-Za-z0-9]*|_'
+    
+  NonBooleanPropertyPrefixedWithIs:
+    active: true
+    
+  VariableMaxLength:
+    active: true
+    maximumVariableNameLength: 64
+    
+  VariableMinLength:
+    active: true
+    minimumVariableNameLength: 1
+
+# ============================================================
+# 报告输出
+# ============================================================
+output-reports:
+  active: true
+  exclude:
+    # 启用所有报告
+
+# ============================================================
+# 处理器
+# ============================================================
+processors:
+  active: true
+  exclude:
+    - 'DetektProgressListener'
+    
+# ============================================================
+# 控制台报告
+# ============================================================
+console-reports:
+  active: true
+  exclude:
+    - 'ProjectStatisticsReport'
+    - 'ComplexityReport'
+    - 'NotificationReport'
+    - 'FindingsReport'
+    - 'FileBasedFindingsReport'
+    - 'LiteFindingsReport'
+  
+  # 只包含严重问题
+  include:
+    - 'FindingsReport'
+
+# ============================================================
+# 特殊规则 - 针对智能座舱项目
+# ============================================================
+comments:
+  active: true
+  
+  # 检查TODO是否有关联需求
+  TodoWithoutRequirement:
+    active: true
+    allowedPattern: 'TODO:.*REQ-[A-Z]+-\d+'
+    
+  # 检查追溯注解
+  MissingTraceAnnotation:
+    active: true
+    traceAnnotation: '@trace'

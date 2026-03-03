@@ -1,0 +1,440 @@
+// =============================================================================
+// 智能座舱主交互系统 - JaCoCo Gradle 配置
+// 版本: 1.0
+// 适用: Android Gradle Plugin 7.0+, Gradle 7.4+
+// =============================================================================
+
+apply plugin: 'jacoco'
+
+// -----------------------------------------------------------------------------
+// JaCoCo 版本配置
+// -----------------------------------------------------------------------------
+jacoco {
+    // 使用最新稳定版本，支持Java 11/17
+    toolVersion = "0.8.10"
+}
+
+// -----------------------------------------------------------------------------
+// Android 应用/库模块通用配置
+// -----------------------------------------------------------------------------
+android {
+    // 启用测试覆盖率 (仅debug构建)
+    buildTypes {
+        debug {
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
+            testCoverageEnabled true
+        }
+        release {
+            enableUnitTestCoverage false
+            enableAndroidTestCoverage false
+        }
+    }
+
+    // 测试选项配置
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            all {
+                // 配置JVM参数以支持JaCoCo
+                jvmArgs '-noverify'
+                jacoco {
+                    includeNoLocationClasses = true
+                    excludes = ['jdk.internal.*']
+                }
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 依赖配置
+// -----------------------------------------------------------------------------
+dependencies {
+    // JaCoCo运行时 (可选，用于离线检测)
+    // jacocoAnt "org.jacoco:org.jacoco.ant:${jacoco.toolVersion}"
+    
+    // 测试依赖
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.10.3'
+    testImplementation 'org.mockito:mockito-core:5.3.1'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:5.0.0'
+}
+
+// -----------------------------------------------------------------------------
+// 覆盖率任务配置 - 单元测试
+// -----------------------------------------------------------------------------
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+    group = "Reporting"
+    description = "Generate JaCoCo coverage report for unit tests"
+
+    // 执行数据文件
+    executionData.setFrom(fileTree(dir: "$buildDir", includes: [
+        'outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec',
+        'jacoco/testDebugUnitTest.exec'
+    ]))
+
+    // 源代码目录
+    sourceDirectories.setFrom(files([
+        "$projectDir/src/main/java",
+        "$projectDir/src/main/kotlin"
+    ]))
+
+    // 类文件目录
+    classDirectories.setFrom(files([
+        fileTree(dir: "$buildDir/intermediates/javac/debug", excludes: getExcludes()),
+        fileTree(dir: "$buildDir/tmp/kotlin-classes/debug", excludes: getExcludes())
+    ]))
+
+    // 报告输出格式
+    reports {
+        xml.required = true
+        xml.outputLocation = file("$buildDir/reports/jacoco/jacocoTestReport.xml")
+        
+        html.required = true
+        html.outputLocation = file("$buildDir/reports/jacoco/html")
+        
+        csv.required = true
+        csv.outputLocation = file("$buildDir/reports/jacoco/jacocoTestReport.csv")
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 覆盖率任务配置 - Android 集成测试
+// -----------------------------------------------------------------------------
+task jacocoAndroidTestReport(type: JacocoReport, dependsOn: ['createDebugCoverageReport']) {
+    group = "Reporting"
+    description = "Generate JaCoCo coverage report for Android instrumentation tests"
+
+    executionData.setFrom(fileTree(dir: "$buildDir", includes: [
+        'outputs/code_coverage/debugAndroidTest/connected/**/*.ec'
+    ]))
+
+    sourceDirectories.setFrom(files([
+        "$projectDir/src/main/java",
+        "$projectDir/src/main/kotlin"
+    ]))
+
+    classDirectories.setFrom(files([
+        fileTree(dir: "$buildDir/intermediates/javac/debug", excludes: getExcludes()),
+        fileTree(dir: "$buildDir/tmp/kotlin-classes/debug", excludes: getExcludes())
+    ]))
+
+    reports {
+        xml.required = true
+        xml.outputLocation = file("$buildDir/reports/jacoco/androidTest/jacocoAndroidTestReport.xml")
+        html.required = true
+        html.outputLocation = file("$buildDir/reports/jacoco/androidTest/html")
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 合并覆盖率报告 (单元测试 + 集成测试)
+// -----------------------------------------------------------------------------
+task jacocoMergedReport(type: JacocoReport, dependsOn: ['jacocoTestReport', 'jacocoAndroidTestReport']) {
+    group = "Reporting"
+    description = "Generate merged JaCoCo coverage report from unit and instrumentation tests"
+
+    executionData.setFrom(fileTree(dir: "$buildDir", includes: [
+        'outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec',
+        'outputs/code_coverage/debugAndroidTest/connected/**/*.ec',
+        'jacoco/*.exec'
+    ]))
+
+    sourceDirectories.setFrom(files([
+        "$projectDir/src/main/java",
+        "$projectDir/src/main/kotlin"
+    ]))
+
+    classDirectories.setFrom(files([
+        fileTree(dir: "$buildDir/intermediates/javac/debug", excludes: getExcludes()),
+        fileTree(dir: "$buildDir/tmp/kotlin-classes/debug", excludes: getExcludes())
+    ]))
+
+    reports {
+        xml.required = true
+        xml.outputLocation = file("$buildDir/reports/jacoco/merged/jacocoMergedReport.xml")
+        
+        html.required = true
+        html.outputLocation = file("$buildDir/reports/jacoco/merged/html")
+        
+        csv.required = true
+        csv.outputLocation = file("$buildDir/reports/jacoco/merged/jacocoMergedReport.csv")
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 覆盖率验证任务 - 质量门禁
+// -----------------------------------------------------------------------------
+task jacocoCoverageVerification(type: JacocoCoverageVerification, dependsOn: ['jacocoTestReport']) {
+    group = "Verification"
+    description = "Verify code coverage meets minimum requirements"
+
+    executionData.setFrom(fileTree(dir: "$buildDir", includes: ['jacoco/*.exec']))
+
+    sourceDirectories.setFrom(files([
+        "$projectDir/src/main/java",
+        "$projectDir/src/main/kotlin"
+    ]))
+
+    classDirectories.setFrom(files([
+        fileTree(dir: "$buildDir/intermediates/javac/debug", excludes: getExcludes()),
+        fileTree(dir: "$buildDir/tmp/kotlin-classes/debug", excludes: getExcludes())
+    ]))
+
+    violationRules {
+        rule {
+            // 启用规则
+            enabled = true
+            
+            // 规则名称
+            name = "智能座舱主交互系统覆盖率门禁"
+            
+            // 失败阈值设置
+            failOnViolation = true
+
+            // 元素级别
+            element = 'BUNDLE'
+
+            // -------------- 通用代码覆盖率阈值 --------------
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.75  // 语句覆盖率最低75%
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.65  // 分支覆盖率最低65%
+            }
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.75  // 方法覆盖率最低75%
+            }
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.85  // 类覆盖率最低85%
+            }
+            
+            // -------------- ASIL安全相关代码阈值 --------------
+            // 注：ASIL-D代码需单独配置100% MC/DC覆盖
+            // 以下规则适用于包含@AsilD注解的类
+        }
+
+        // ASIL-D 专用规则 (针对安全关键包)
+        rule {
+            enabled = true
+            name = "ASIL-D安全关键代码覆盖率门禁"
+            
+            // 仅检查安全关键包
+            includes = ['com/cockpit/safety/**', 'com/cockpit/asil/**']
+            
+            failOnViolation = true
+            element = 'PACKAGE'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 1.00  // ASIL-D要求100%语句覆盖
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 1.00  // ASIL-D要求100%分支覆盖
+            }
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 1.00  // ASIL-D要求100%方法覆盖
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 排除配置
+// -----------------------------------------------------------------------------
+def getExcludes() {
+    return [
+        // Android 自动生成
+        '**/R.class',
+        '**/R$*.class',
+        '**/BuildConfig.class',
+        '**/Manifest.class',
+        '**/Manifest$*.class',
+        
+        // 数据绑定
+        '**/databinding/**',
+        '**/DataBindingInfo.class',
+        '**/DataBinderMapperImpl.class',
+        
+        // 测试相关
+        '**/test/**',
+        '**/androidTest/**',
+        '**/*Test.class',
+        '**/*Test$*.class',
+        '**/*Mock*.class',
+        '**/Mock*.class',
+        
+        // 生成代码
+        '**/generated/**',
+        '**/*Generated*.class',
+        '**/*Gen*.class',
+        
+        // Protocol Buffer
+        '**/proto/**',
+        '**/*Proto*.class',
+        '**/protobuf/**',
+        
+        // Room 数据库
+        '**/room/**',
+        '**/*_Impl.class',
+        '**/*Dao_Impl.class',
+        
+        // Dagger/Hilt
+        '**/di/**',
+        '**/*_MembersInjector.class',
+        '**/*_Factory.class',
+        '**/*_Provide*Factory.class',
+        '**/Hilt_*.class',
+        
+        // UI组件纯展示 (可豁免)
+        '**/widget/**',
+        '**/view/**',
+        '**/adapter/**',
+        
+        // 第三方库封装
+        '**/external/**',
+        '**/thirdparty/**'
+    ]
+}
+
+// -----------------------------------------------------------------------------
+// SonarQube 集成配置 (可选)
+// -----------------------------------------------------------------------------
+sonarqube {
+    properties {
+        property "sonar.coverage.jacoco.xmlReportPaths", 
+            "$buildDir/reports/jacoco/merged/jacocoMergedReport.xml,$buildDir/reports/jacoco/jacocoTestReport.xml"
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.coverage.exclusions", getExcludes().join(',')
+    }
+}
+
+// -----------------------------------------------------------------------------
+// GitLab CI 集成任务
+// -----------------------------------------------------------------------------
+task coverageReportGitLab(type: JacocoReport) {
+    group = "Reporting"
+    description = "Generate coverage report for GitLab CI integration"
+
+    dependsOn 'testDebugUnitTest'
+
+    executionData.setFrom(fileTree(dir: "$buildDir", includes: [
+        'outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec',
+        'jacoco/*.exec'
+    ]))
+
+    sourceDirectories.setFrom(files([
+        "$projectDir/src/main/java",
+        "$projectDir/src/main/kotlin"
+    ]))
+
+    classDirectories.setFrom(files([
+        fileTree(dir: "$buildDir/intermediates/javac/debug", excludes: getExcludes()),
+        fileTree(dir: "$buildDir/tmp/kotlin-classes/debug", excludes: getExcludes())
+    ]))
+
+    reports {
+        xml.required = true
+        xml.outputLocation = file("$buildDir/reports/cobertura.xml")
+        
+        html.required = true
+        html.outputLocation = file("$buildDir/reports/jacoco")
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 增量覆盖率检查 (Diff Coverage)
+// -----------------------------------------------------------------------------
+configurations {
+    diffCoverage
+}
+
+dependencies {
+    diffCoverage 'com.github.form-com.diff-coverage-gradle:diff-coverage:0.9.5'
+}
+
+apply plugin: 'com.form.diff-coverage'
+
+diffCoverage {
+    diffSource {
+        // 基于Git diff计算增量覆盖率
+        git.diffBase = 'origin/main'
+    }
+
+    violationRules {
+        // 新代码覆盖率要求
+        minLines = 0.8      // 新增代码80%行覆盖
+        minBranches = 0.75  // 新增代码75%分支覆盖
+        failOnViolation = true
+    }
+
+    reportConfiguration {
+        html = true
+        xml = true
+        console = true
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 任务依赖关系
+// -----------------------------------------------------------------------------
+// 在check任务中自动执行覆盖率验证
+check.dependsOn jacocoCoverageVerification
+
+// 打印覆盖率摘要任务
+task printCoverageSummary {
+    group = "Reporting"
+    description = "Print coverage summary to console"
+    
+    dependsOn 'jacocoTestReport'
+    
+    doLast {
+        def reportFile = file("$buildDir/reports/jacoco/jacocoTestReport.xml")
+        if (reportFile.exists()) {
+            def parser = new XmlSlurper()
+            def report = parser.parse(reportFile)
+            
+            println "╔════════════════════════════════════════════════════════════╗"
+            println "║           代码覆盖率测试报告摘要                            ║"
+            println "╠════════════════════════════════════════════════════════════╣"
+            
+            report.counter.each { counter ->
+                def type = counter.@type
+                def missed = counter.@missed.toInteger()
+                def covered = counter.@covered.toInteger()
+                def total = missed + covered
+                def percent = total > 0 ? (covered / total * 100).round(2) : 0
+                
+                def status = percent >= 75 ? "✓" : (percent >= 65 ? "⚠" : "✗")
+                println "║ ${type.padRight(15)}: ${percent.toString().padLeft(6)}% (${covered}/${total}) ${status}"
+            }
+            
+            println "╚════════════════════════════════════════════════════════════╝"
+        } else {
+            println "覆盖率报告文件不存在: ${reportFile}"
+        }
+    }
+}
+
+// =============================================================================
+// 使用说明:
+// 1. 运行单元测试覆盖率: ./gradlew jacocoTestReport
+// 2. 运行Android测试覆盖率: ./gradlew jacocoAndroidTestReport
+// 3. 运行合并覆盖率: ./gradlew jacocoMergedReport
+// 4. 验证覆盖率门禁: ./gradlew jacocoCoverageVerification
+// 5. 运行全部并打印摘要: ./gradlew printCoverageSummary
+// =============================================================================
