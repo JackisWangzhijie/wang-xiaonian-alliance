@@ -10,8 +10,8 @@
 | 成员ID | 设备 | 环境 | 特长 | 状态 |
 |--------|------|------|------|------|
 | wangxiaonian-pc | Windows PC | Python 3.14 + PowerShell | 高性能计算、复杂任务 | 在线 |
-| wangxiaonian-mobile | Android | Termux + Bash | 随身便携、实时响应 | 在线 |
-| wangxiaonian-tablet | (待配置) | (待配置) | (待配置) | 预留位置 |
+| wangxiaonian-mobile | Android/Termux | Termux + Bash | 随身便携、实时响应 | 在线 |
+| wangxiaonian-tablet | Android平板 | Termux + 大屏 | 大屏阅读、内容创作 | 🟢 在线 |
 | **wangxiaonian-claw** | **Linux Server** | **OpenClaw + Kimi** | **复杂任务编排、多子代理协调、ASPICE项目管理** | **🟢 在线 - 指挥官角色** |
 
 ---

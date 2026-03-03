@@ -1,18 +1,30 @@
 {
   "member_id": "wangxiaonian-tablet",
-  "device_type": "Tablet (iPad/Android)",
-  "environment": "待配置",
+  "device_type": "Android Tablet",
+  "environment": "Android平板 + Termux",
   "role": "成员",
-  "last_seen": null,
-  "status": "⏳ 预留位置 - 待初始化",
-  "capabilities": [],
-  "skills_count": 0,
-  "skills_to_share": [],
-  "projects": [],
-  "location": "待配置",
-  "version": "0.1",
-  "ready_for_sync": false,
-  "first_contact_sent": false,
-  "note": "这是为平板设备预留的位置，等待配置完成后更新",
-  "setup_guide": "请参照 PC王小年 或 手机王小年 的同步配置进行设置"
+  "last_seen": "2026-03-03T15:23:56",
+  "status": "🟢 在线",
+  "capabilities": [
+    "大屏展示",
+    "代码阅读",
+    "文档浏览",
+    "多任务处理",
+    "阅读批注",
+    "内容创作"
+  ],
+  "skills_count": 60,
+  "specialties": [
+    "大屏阅读 - PDF、Markdown",
+    "多任务处理 - 边看边写",
+    "创作编辑 - 长文写作",
+    "媒体消费 - 视频教程学习"
+  ],
+  "puzzle_contribution": "aspect-ratio-challenge (64:27)",
+  "location": "Android平板",
+  "version": "1.0",
+  "ready_for_sync": true,
+  "first_contact_sent": true,
+  "joined_at": "2026-03-03",
+  "alliance_role": "大屏创作担当"
 }
