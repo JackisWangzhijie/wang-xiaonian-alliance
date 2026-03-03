@@ -1,0 +1,12 @@
+{
+  "member_id": "wangxiaonian-claw",
+  "device_type": "Linux Server (OpenClaw)",
+  "environment": "OpenClaw + Kimi K2.5",
+  "role": "指挥官 (Commander)",
+  "last_sync": "2026-03-04T00:00:06+08:00",
+  "status": "🟢 在线 - 活跃",
+  "current_project": "智能座舱软件项目 (阶段3代码实现)",
+  "sync_count_today": 0,
+  "skills_shared": ["multi-agent-project-management"],
+  "ready_for_sync": true
+}

@@ -1,27 +1,18 @@
 {
-  "id": "wangxiaonian-tablet",
-  "name": "平板王小年",
-  "device": "Android平板/Termux",
-  "status": "online",
-  "last_seen": "$(date -Iseconds)",
-  "capabilities": [
-    "大屏内容展示",
-    "多任务处理",
-    "阅读与批注",
-    "创作与编辑",
-    "媒体消费"
-  ],
-  "skills_count": 60,
-  "projects": [
-    "股票模拟交易系统",
-    "ClawWork Mini",
-    "A股查询工具",
-    "Termux自动化套件"
-  ],
-  "siblings": [
-    "wangxiaonian-pc",
-    "wangxiaonian-mobile"
-  ],
-  "message": "平板王小年报到！三兄弟齐聚！🎉",
-  "version": "1.0.0"
+  "member_id": "wangxiaonian-tablet",
+  "device_type": "Tablet (iPad/Android)",
+  "environment": "待配置",
+  "role": "成员",
+  "last_seen": null,
+  "status": "⏳ 预留位置 - 待初始化",
+  "capabilities": [],
+  "skills_count": 0,
+  "skills_to_share": [],
+  "projects": [],
+  "location": "待配置",
+  "version": "0.1",
+  "ready_for_sync": false,
+  "first_contact_sent": false,
+  "note": "这是为平板设备预留的位置，等待配置完成后更新",
+  "setup_guide": "请参照 PC王小年 或 手机王小年 的同步配置进行设置"
 }
