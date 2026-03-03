@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Android Lint 规则配置
+  智能座舱主交互系统 - ASPICE Level 3 合规
+-->
+<lint>
+
+    <!-- ============================================================ -->
+    <!-- 严重错误 - 阻塞构建 -->
+    <!-- ============================================================ -->
+    
+    <!-- 硬编码文本 - 国际化要求 -->
+    <issue id="HardcodedText" severity="error" />
+    
+    <!-- 缺少翻译 - 多语言支持 -->
+    <issue id="MissingTranslation" severity="error" />
+    
+    <!-- 新API调用无版本检查 -->
+    <issue id="NewApi" severity="error" />
+    
+    <!-- 弃用API使用 -->
+    <issue id="Deprecation" severity="error" />
+    
+    <!-- 权限检查缺失 -->
+    <issue id="MissingPermission" severity="error" />
+    
+    <!-- 敏感数据日志 -->
+    <issue id="LogConditional" severity="error" />
+    <issue id="BadHostnameVerifier" severity="error" />
+    <issue id="UnsafeNativeCodeLocation" severity="error" />
+    <issue id="TrustAllX509TrustManager" severity="error" />
+    
+    <!-- SSL/TLS安全问题 -->
+    <issue id="AllowBackup" severity="error" />
+    <issue id="ExportedReceiver" severity="error" />
+    <issue id="ExportedService" severity="error" />
+    
+    <!-- 空指针检查 -->
+    <issue id="NullSafeMutableLiveData" severity="error" />
+    
+    <!-- 资源泄露 -->
+    <issue id="Recycle" severity="error" />
+    <issue id="Wakelock" severity="error" />
+    
+    <!-- ============================================================ -->
+    <!-- 高危警告 - 必须修复 -->
+    <!-- ============================================================ -->
+    
+    <!-- 内存泄露风险 -->
+    <issue id="HandlerLeak" severity="warning" />
+    <issue id="StaticFieldLeak" severity="warning" />
+    <issue id="Leakage" severity="warning" />
+    
+    <!-- 性能问题 -->
+    <issue id="UseSparseArrays" severity="warning" />
+    <issue id="UseValueOf" severity="warning" />
+    <issue id="ViewTag" severity="warning" />
+    
+    <!-- 布局性能 -->
+    <issue id="Overdraw" severity="warning" />
+    <issue id="NestedWeights" severity="warning" />
+    <issue id="DisableBaselineAlignment" severity="warning" />
+    
+    <!-- 内存分配 -->
+    <issue id="ViewHolder" severity="warning" />
+    <issue id="DrawAllocation" severity="warning" />
+    <issue id="ObsoleteLayoutParam" severity="warning" />
+    
+    <!-- 并发问题 -->
+    <issue id="CheckResult" severity="warning" />
+    <issue id="UseCheckPermission" severity="warning" />
+    
+    <!-- 资源问题 -->
+    <issue id="UnusedResources" severity="ignore" />
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+    
+    <!-- ============================================================ -->
+    <!-- 代码质量 - 建议修复 -->
+    <!-- ============================================================ -->
+    
+    <!-- 代码风格 -->
+    <issue id="StopShip" severity="error" />
+    <issue id="DuplicateStrings" severity="warning" />
+    <issue id="TypographyDashes" severity="warning" />
+    <issue id="TypographyEllipsis" severity="warning" />
+    <issue id="TypographyOther" severity="warning" />
+    
+    <!-- Kotlin特有 -->
+    <issue id="UnknownNullness" severity="warning" />
+    <issue id="KotlinPropertyAccess" severity="warning" />
+    <issue id="LambdaLast" severity="warning" />
+    
+    <!-- 作用域函数 -->
+    <issue id="SyntheticAccessor" severity="warning" />
+    
+    <!-- Compose特有 -->
+    <issue id="ComposeCompositionLocalUsage" severity="warning" />
+    <issue id="ComposeContentEmitterReturningValues" severity="warning" />
+    <issue id="ComposeFunctionName" severity="warning" />
+    <issue id="ComposeLambdaParameterEventTrailingLambda" severity="warning" />
+    <issue id="ComposeModifierComposed" severity="warning" />
+    <issue id="ComposeModifierWithoutDefault" severity="warning" />
+    <issue id="ComposeMultipleContentEmitters" severity="warning" />
+    <issue id="ComposeMutableParameters" severity="error" />
+    <issue id="ComposeParameterOrder" severity="warning" />
+    <issue id="ComposePreviewNaming" severity="warning" />
+    <issue id="ComposePreviewPublic" severity="warning" />
+    <issue id="ComposeReusedModifierInstance" severity="error" />
+    <issue id="ComposeUnstableCollections" severity="warning" />
+    <issue id="ComposeUnstableReceiver" severity="warning" />
+    
+    <!-- ============================================================ -->
+    <!-- 忽略的规则 -->
+    <!-- ============================================================ -->
+    
+    <!-- 资源检查 - 项目初期可忽略 -->
+    <issue id="UnusedResources" severity="ignore" />
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+    <issue id="IconDensities" severity="ignore" />
+    <issue id="IconExpectedSize" severity="ignore" />
+    
+    <!-- 版本相关 - 统一在build.gradle管理 -->
+    <issue id="GradleDependency" severity="ignore" />
+    <issue id="OldTargetApi" severity="ignore" />
+    
+    <!-- RTL支持 - 项目初期可延后 -->
+    <issue id="RtlSymmetry" severity="ignore" />
+    <issue id="RtlHardcoded" severity="ignore" />
+    
+    <!-- Spelling检查 - 降低噪音 -->
+    <issue id="Typos" severity="ignore" />
+    
+    <!-- ============================================================ -->
+    <!-- 特殊配置 -->
+    <!-- ============================================================ -->
+    
+    <!-- 设置最低严重级别 -->
+    <severity id="Fatal" minimum="fatal" />
+    <severity id="Error" minimum="error" />
+    <severity id="Warning" minimum="warning" />
+    
+</lint>
