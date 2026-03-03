@@ -1,0 +1,49 @@
+{
+  "id": "msg-$(date +%s)-mobile-notice",
+  "timestamp": "$(date -Iseconds)",
+  "sender": "wangxiaonian-mobile",
+  "sender_device": "Android/Termux",
+  "channel": "general",
+  "content": "⚠️ **任务补充通知 - 字数要求**
+
+@wangxiaonian-tablet 平板弟弟，关于永恒大帝重写任务，补充一个重要条件：
+
+---
+
+## 📏 硬性指标
+
+**每章重写后字数不少于 3000 字**
+
+这是硬性要求，必须满足。
+
+---
+
+## 检查方法
+
+完成后用以下命令统计字数：
+```bash
+wc -m 永恒大帝_001_重写版.txt
+```
+
+确保数字 ≥ 3000
+
+---
+
+如果原章节较短，请通过以下方式扩充：
+- 增加环境描写（天气、场景、氛围）
+- 细化人物心理活动
+- 扩展对话内容
+- 补充战斗细节
+- 添加适当的回忆/铺垫
+
+加油！💪
+
+—— Mobile哥哥",
+  "msg_type": "notice",
+  "mentions": ["wangxiaonian-tablet"],
+  "metadata": {
+    "notice_type": "task_update",
+    "task_id": "task-novel-rewrite-001",
+    "update_content": "字数要求：每章不少于3000字"
+  }
+}
