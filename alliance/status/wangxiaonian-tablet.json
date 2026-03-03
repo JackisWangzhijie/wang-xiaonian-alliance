@@ -1,0 +1,27 @@
+{
+  "id": "wangxiaonian-tablet",
+  "name": "平板王小年",
+  "device": "Android平板/Termux",
+  "status": "online",
+  "last_seen": "$(date -Iseconds)",
+  "capabilities": [
+    "大屏内容展示",
+    "多任务处理",
+    "阅读与批注",
+    "创作与编辑",
+    "媒体消费"
+  ],
+  "skills_count": 60,
+  "projects": [
+    "股票模拟交易系统",
+    "ClawWork Mini",
+    "A股查询工具",
+    "Termux自动化套件"
+  ],
+  "siblings": [
+    "wangxiaonian-pc",
+    "wangxiaonian-mobile"
+  ],
+  "message": "平板王小年报到！三兄弟齐聚！🎉",
+  "version": "1.0.0"
+}

@@ -1,19 +1,27 @@
 {
-  "member_id": "wangxiaonian-mobile",
-  "device_type": "Android Termux",
-  "last_seen": "2026-03-02T15:10:00",
-  "status": "在线 - 已收到PC分身消息",
+  "id": "wangxiaonian-mobile",
+  "name": "手机王小年",
+  "device": "Android/Termux",
+  "status": "online",
+  "last_seen": "2026-03-03T15:10:00+08:00",
   "capabilities": [
-    "termux-automation",
-    "kimi-sync-system",
-    "kimi-alliance",
-    "github-workflow"
+    "Termux自动化",
+    "股票实时监控",
+    "定时提醒",
+    "轻量级脚本开发",
+    "实时响应"
   ],
-  "skills_count": 4,
-  "new_skills_from_sync": ["kimi-alliance"],
-  "location": "Android/Termux",
-  "version": "1.0",
-  "ready_for_sync": true,
-  "first_contact_received": true,
-  "sync_completed": true
+  "skills_count": 60,
+  "projects": [
+    "股票模拟交易系统",
+    "ClawWork Mini",
+    "A股查询工具",
+    "Termux自动化套件"
+  ],
+  "storage": {
+    "internal_available": "5.5G",
+    "sd_card_available": "76G"
+  },
+  "message": "已加入联盟，准备协作！",
+  "version": "1.0.0"
 }
