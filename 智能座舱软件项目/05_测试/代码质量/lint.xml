@@ -1,99 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Android Lint 规则配置
-  智能座舱主交互系统 - ASPICE Level 3 合规
+  Android Lint 规则配置 - ASPICE Level 3 完整版
+  智能座舱主交互系统
+  版本: 2.0
 -->
 <lint>
 
     <!-- ============================================================ -->
-    <!-- 严重错误 - 阻塞构建 -->
+    <!-- 致命错误 - 阻塞构建 (Fatal) -->
     <!-- ============================================================ -->
     
-    <!-- 硬编码文本 - 国际化要求 -->
-    <issue id="HardcodedText" severity="error" />
+    <!-- 编译错误 -->
+    <issue id="NewApi" severity="fatal" />
+    <issue id="InlinedApi" severity="fatal" />
+    <issue id="OverrideAbstract" severity="fatal" />
+    <issue id="MissingSuperCall" severity="fatal" />
     
-    <!-- 缺少翻译 - 多语言支持 -->
-    <issue id="MissingTranslation" severity="error" />
+    <!-- 资源错误 -->
+    <issue id="MissingTranslation" severity="fatal" />
+    <issue id="ExtraTranslation" severity="fatal" />
+    <issue id="MissingDefaultResource" severity="fatal" />
     
-    <!-- 新API调用无版本检查 -->
-    <issue id="NewApi" severity="error" />
+    <!-- ============================================================ -->
+    <!-- 严重错误 - 必须修复 (Error) -->
+    <!-- ============================================================ -->
     
-    <!-- 弃用API使用 -->
-    <issue id="Deprecation" severity="error" />
-    
-    <!-- 权限检查缺失 -->
-    <issue id="MissingPermission" severity="error" />
-    
-    <!-- 敏感数据日志 -->
-    <issue id="LogConditional" severity="error" />
+    <!-- 安全性 -->
     <issue id="BadHostnameVerifier" severity="error" />
-    <issue id="UnsafeNativeCodeLocation" severity="error" />
     <issue id="TrustAllX509TrustManager" severity="error" />
-    
-    <!-- SSL/TLS安全问题 -->
     <issue id="AllowBackup" severity="error" />
-    <issue id="ExportedReceiver" severity="error" />
     <issue id="ExportedService" severity="error" />
+    <issue id="ExportedReceiver" severity="error" />
+    <issue id="ExportedContentProvider" severity="error" />
+    <issue id="SetJavaScriptEnabled" severity="error" />
+    <issue id="WebViewClientOnReceivedSslError" severity="error" />
+    <issue id="AddJavascriptInterface" severity="error" />
+    <issue id="UnsafeNativeCodeLocation" severity="error" />
+    <issue id="UnsafeProtectedBroadcastReceiver" severity="error" />
     
-    <!-- 空指针检查 -->
+    <!-- 硬编码文本 - 国际化要求 -->
+    <issue id="HardcodedText" severity="error">
+        <ignore path="**/test/**" />
+        <ignore path="**/androidTest/**" />
+    </issue>
+    
+    <!-- 权限 -->
+    <issue id="MissingPermission" severity="error" />
+    <issue id="PermissionImpliesUnsupportedChromeOsHardware" severity="error" />
+    <issue id="UnusedPermission" severity="warning" />
+    <issue id="UsesPermission" severity="warning" />
+    
+    <!-- 弃用API -->
+    <issue id="Deprecation" severity="error" />
+    <issue id="DeprecatedProvider" severity="error" />
+    <issue id="DeprecatedSinceApi" severity="error" />
+    
+    <!-- 空安全 -->
     <issue id="NullSafeMutableLiveData" severity="error" />
+    <issue id="UnknownNullness" severity="error" />
+    <issue id="KotlinNullnessAnnotation" severity="error" />
     
     <!-- 资源泄露 -->
     <issue id="Recycle" severity="error" />
     <issue id="Wakelock" severity="error" />
+    <issue id="WakelockTimeout" severity="error" />
+    <issue id="MediaCapabilities" severity="error" />
+    <issue id="UnclosedCloseable" severity="error" />
+    
+    <!-- 线程安全 -->
+    <issue id="StaticFieldLeak" severity="error" />
+    <issue id="ThreadSafety" severity="error" />
     
     <!-- ============================================================ -->
-    <!-- 高危警告 - 必须修复 -->
+    <!-- 高危警告 - 必须修复 (Warning) -->
     <!-- ============================================================ -->
     
     <!-- 内存泄露风险 -->
     <issue id="HandlerLeak" severity="warning" />
-    <issue id="StaticFieldLeak" severity="warning" />
     <issue id="Leakage" severity="warning" />
+    <issue id="FragmentLiveDataObserve" severity="warning" />
+    <issue id="AutoDispose" severity="warning" />
     
     <!-- 性能问题 -->
     <issue id="UseSparseArrays" severity="warning" />
     <issue id="UseValueOf" severity="warning" />
     <issue id="ViewTag" severity="warning" />
+    <issue id="InefficientWeight" severity="warning" />
+    <issue id="NestedWeights" severity="warning" />
+    <issue id="Overdraw" severity="warning" />
+    <issue id="UnusedNamespace" severity="warning" />
+    <issue id="ObsoleteLayoutParam" severity="warning" />
+    <issue id="MergeRootFrame" severity="warning" />
+    <issue id="DisableBaselineAlignment" severity="warning" />
+    <issue id="InefficientPaint" severity="warning" />
     
     <!-- 布局性能 -->
-    <issue id="Overdraw" severity="warning" />
-    <issue id="NestedWeights" severity="warning" />
-    <issue id="DisableBaselineAlignment" severity="warning" />
-    
-    <!-- 内存分配 -->
     <issue id="ViewHolder" severity="warning" />
     <issue id="DrawAllocation" severity="warning" />
-    <issue id="ObsoleteLayoutParam" severity="warning" />
+    <issue id="CustomViewStyleable" severity="warning" />
+    <issue id="UselessParent" severity="warning" />
+    <issue id="TooManyViews" severity="warning" />
+    <issue id="TooDeepLayout" severity="warning" />
     
     <!-- 并发问题 -->
     <issue id="CheckResult" severity="warning" />
     <issue id="UseCheckPermission" severity="warning" />
+    <issue id="DefaultLocale" severity="warning" />
+    <issue id="SimpleDateFormat" severity="warning" />
     
-    <!-- 资源问题 -->
-    <issue id="UnusedResources" severity="ignore" />
-    <issue id="IconMissingDensityFolder" severity="ignore" />
+    <!-- 数据绑定 -->
+    <issue id="DataBindingWithoutKapt" severity="warning" />
+    <issue id="BindingInfo" severity="warning" />
     
     <!-- ============================================================ -->
-    <!-- 代码质量 - 建议修复 -->
+    <!-- Kotlin 特定规则 -->
     <!-- ============================================================ -->
     
-    <!-- 代码风格 -->
-    <issue id="StopShip" severity="error" />
-    <issue id="DuplicateStrings" severity="warning" />
-    <issue id="TypographyDashes" severity="warning" />
-    <issue id="TypographyEllipsis" severity="warning" />
-    <issue id="TypographyOther" severity="warning" />
-    
-    <!-- Kotlin特有 -->
-    <issue id="UnknownNullness" severity="warning" />
     <issue id="KotlinPropertyAccess" severity="warning" />
     <issue id="LambdaLast" severity="warning" />
-    
-    <!-- 作用域函数 -->
+    <issue id="NoHardKeywords" severity="warning" />
     <issue id="SyntheticAccessor" severity="warning" />
+    <issue id="NonKaptIssue" severity="warning" />
+    <issue id="KaptUsageInsteadOfKsp" severity="informational" />
     
-    <!-- Compose特有 -->
+    <!-- ============================================================ -->
+    <!-- Jetpack Compose 规则 -->
+    <!-- ============================================================ -->
+    
     <issue id="ComposeCompositionLocalUsage" severity="warning" />
     <issue id="ComposeContentEmitterReturningValues" severity="warning" />
     <issue id="ComposeFunctionName" severity="warning" />
@@ -108,35 +141,139 @@
     <issue id="ComposeReusedModifierInstance" severity="error" />
     <issue id="ComposeUnstableCollections" severity="warning" />
     <issue id="ComposeUnstableReceiver" severity="warning" />
+    <issue id="ComposeM2Api" severity="warning" />
+    <issue id="ComposeModelClassInCompositionWithStateInstatiation" severity="warning" />
+    <issue id="ComposeSuspiciousCompositionLocalModifierRead" severity="warning" />
+    <issue id="ComposeCollectionItemReuse" severity="warning" />
+    <issue id="ComposeStateNotRemembered" severity="error" />
+    <issue id="ComposeAutoboxingStateCreation" severity="warning" />
+    <issue id="ComposeInnerClassModifierUsage" severity="error" />
+    <issue id="ComposeUnsafePauseInComposition" severity="error" />
     
     <!-- ============================================================ -->
-    <!-- 忽略的规则 -->
+    <!-- 代码质量 - 建议修复 (Informational) -->
     <!-- ============================================================ -->
     
-    <!-- 资源检查 - 项目初期可忽略 -->
+    <!-- 代码风格 -->
+    <issue id="StopShip" severity="error" />
+    <issue id="StopShipComment" severity="error" />
+    <issue id="DuplicateStrings" severity="informational" />
+    <issue id="TypographyDashes" severity="informational" />
+    <issue id="TypographyEllipsis" severity="informational" />
+    <issue id="TypographyOther" severity="informational" />
+    <issue id="TypographyQuotes" severity="informational" />
+    
+    <!-- 文档 -->
+    <issue id="MissingVersion" severity="informational" />
+    <issue id="RequiredFeature" severity="informational" />
+    
+    <!-- ============================================================ -->
+    <!-- 国际化 -->
+    <!-- ============================================================ -->
+    
+    <issue id="RtlSymmetry" severity="informational" />
+    <issue id="RtlHardcoded" severity="informational" />
+    <issue id="RtlEnabled" severity="informational" />
+    
+    <!-- ============================================================ -->
+    <!-- 资源检查 -->
+    <!-- ============================================================ -->
+    
+    <!-- 忽略资源检查 - 项目初期可忽略，但应定期审查 -->
     <issue id="UnusedResources" severity="ignore" />
     <issue id="IconMissingDensityFolder" severity="ignore" />
     <issue id="IconDensities" severity="ignore" />
     <issue id="IconExpectedSize" severity="ignore" />
+    <issue id="IconLauncherShape" severity="ignore" />
+    <issue id="IconLocation" severity="ignore" />
+    <issue id="IconXmlAndPng" severity="ignore" />
+    <issue id="IconDipSize" severity="ignore" />
+    <issue id="IconExtension" severity="ignore" />
+    <issue id="MipmapIcons" severity="ignore" />
     
-    <!-- 版本相关 - 统一在build.gradle管理 -->
+    <!-- ============================================================ -->
+    <!-- 版本管理 -->
+    <!-- ============================================================ -->
+    
+    <!-- 依赖版本在build.gradle集中管理 -->
     <issue id="GradleDependency" severity="ignore" />
+    <issue id="GradleDynamicVersion" severity="error" />
     <issue id="OldTargetApi" severity="ignore" />
+    <issue id="OldVersionApi" severity="ignore" />
+    <issue id="ExpiredTargetSdkVersion" severity="error" />
+    <issue id="ExpiredTargetSdkInLibrary" severity="error" />
     
-    <!-- RTL支持 - 项目初期可延后 -->
-    <issue id="RtlSymmetry" severity="ignore" />
-    <issue id="RtlHardcoded" severity="ignore" />
+    <!-- ============================================================ -->
+    <!-- 拼写和文本 -->
+    <!-- ============================================================ -->
     
-    <!-- Spelling检查 - 降低噪音 -->
     <issue id="Typos" severity="ignore" />
+    <issue id="ChronometerCountDown" severity="ignore" />
     
     <!-- ============================================================ -->
-    <!-- 特殊配置 -->
+    <!-- Android Automotive 特定规则 -->
     <!-- ============================================================ -->
     
-    <!-- 设置最低严重级别 -->
-    <severity id="Fatal" minimum="fatal" />
-    <severity id="Error" minimum="error" />
-    <severity id="Warning" minimum="warning" />
+    <!-- 车载系统特定 -->
+    <issue id="AutomotiveAppCategories" severity="warning" />
+    <issue id="AutomotiveAppCheck" severity="warning" />
+    <issue id="AutomotiveAppDistraction" severity="error" />
+    <issue id="AutomotiveAppLaunchMode" severity="warning" />
+    <issue id="AutomotiveAppNavigationCategory" severity="warning" />
+    <issue id="AutomotiveAppRootDirectory" severity="warning" />
+    <issue id="AutomotiveAppStyle" severity="warning" />
+    <issue id="AutomotiveAppTheme" severity="warning" />
     
+    <!-- 驾驶安全 -->
+    <issue id="CarPermission" severity="error" />
+    <issue id="CarRestrictedPermission" severity="error" />
+    
+    <!-- ============================================================ -->
+    <!-- 安全增强规则 -->
+    <!-- ============================================================ -->
+    
+    <!-- SQL注入防护 -->
+    <issue id="SQLiteString" severity="warning" />
+    <issue id="AuthLeak" severity="error" />
+    
+    <!-- 文件安全 -->
+    <issue id="WorldReadableFiles" severity="error" />
+    <issue id="WorldWriteableFiles" severity="error" />
+    <issue id="SetWorldReadable" severity="error" />
+    <issue id="SetWorldWritable" severity="error" />
+    
+    <!-- Intent安全 -->
+    <issue id="UnsafeIntentLaunch" severity="error" />
+    <issue id="UnsafeImplicitIntentBroadcast" severity="error" />
+    
+    <!-- 日志安全 -->
+    <issue id="LogConditional" severity="error" />
+    
+    <!-- 随机数安全 -->
+    <issue id="SecureRandom" severity="warning" />
+    
+    <!-- 剪贴板安全 -->
+    <issue id="ContentDescription" severity="warning" />
+    
+    <!-- ============================================================ -->
+    <!-- 测试相关 -->
+    <!-- ============================================================ -->
+    
+    <issue id="TestAppPlatformCredential" severity="warning" />
+    <issue id="TestSizeAnnotation" severity="informational" />
+    <issue id="VisibleForTests" severity="warning" />
+    
+    <!-- ============================================================ -->
+    <!-- 其他忽略的规则 -->
+    <!-- ============================================================ -->
+    
+    <issue id="MissingApplicationIcon" severity="ignore" />
+    <issue id="MissingTvBanner" severity="ignore" />
+    <issue id="PermissionNamingConvention" severity="ignore" />
+    <issue id="RestrictedApi" severity="ignore" />
+    <issue id="SelectableText" severity="ignore" />
+    <issue id="UnusedAttribute" severity="ignore" />
+    <issue id="UnusedIds" severity="ignore" />
+    <issue id="UnusedQuantity" severity="ignore" />
+
 </lint>

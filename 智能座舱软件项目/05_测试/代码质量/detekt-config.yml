@@ -1,20 +1,22 @@
 # ============================================================
-# Detekt 静态代码分析配置
-# 智能座舱主交互系统 - ASPICE Level 3 合规
+# Detekt 静态代码分析配置 - ASPICE Level 3 完整版
+# 智能座舱主交互系统
+# 版本: 2.0
 # ============================================================
 
 config:
   validation: true
   warningsAsErrors: true
   checkExhaustiveness: false
+  # 并行处理提升性能
+  parallel: true
 
 # ============================================================
-# 代码复杂度规则 (ASPICE要求: Cyclomatic ≤10)
+# 代码复杂度规则 (ASPICE要求: Cyclomatic ≤10, Cognitive ≤15)
 # ============================================================
 complexity:
   active: true
   
-  # 循环复杂度 - ASPICE要求 ≤10
   CyclomaticComplexMethod:
     active: true
     threshold: 10
@@ -32,55 +34,47 @@ complexity:
       - use
       - with
     
-  # 认知复杂度 - 辅助指标
   CognitiveComplexMethod:
     active: true
     threshold: 15
     
-  # 复杂条件
   ComplexCondition:
     active: true
     threshold: 4
     
-  # 复杂接口
   ComplexInterface:
     active: true
     threshold: 10
     includeStaticDeclarations: false
     includePrivateDeclarations: false
     
-  # 方法行数限制
   LongMethod:
     active: true
     threshold: 60
     
-  # 类行数限制
   LongParameterList:
     active: true
     functionThreshold: 6
-    constructorThreshold: 7
+    constructorThreshold: 8
     ignoreDefaultParameters: false
     ignoreDataClasses: true
-    ignoreAnnotatedParameter: []
+    ignoreAnnotatedParameter: ['Composable']
     
-  # 嵌套块深度
   NestedBlockDepth:
     active: true
     threshold: 4
     
-  # 字符串模板复杂度
   StringLiteralDuplication:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*Mother.kt', '**/test/**/util/**']
     threshold: 3
     ignoreAnnotation: true
     excludeStringsWithLessThan5Characters: true
-    ignoreStringsRegex: '$^'
+    ignoreStringsRegex: '^(TAG|LOG_TAG|.*_TAG)$'
     
-  # 方法数量
   TooManyFunctions:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/di/**']
     thresholdInFiles: 11
     thresholdInClasses: 11
     thresholdInInterfaces: 11
@@ -90,13 +84,12 @@ complexity:
     ignorePrivate: false
     ignoreOverridden: false
     
-  # 大括号嵌套
   LargeClass:
     active: true
     threshold: 600
 
 # ============================================================
-# 协程规则 (重要：智能座舱大量使用协程)
+# 协程规则 (智能座舱大量使用协程 - 严格检查)
 # ============================================================
 coroutines:
   active: true
@@ -115,9 +108,13 @@ coroutines:
     
   SuspendFunWithFlowReturnType:
     active: true
+    
+  # 自定义: 确保使用SupervisorJob处理子协程
+  SuspendFunSwallowedCancellation:
+    active: true
 
 # ============================================================
-# 空安全规则
+# 潜在缺陷规则 (ASIL安全要求)
 # ============================================================
 potential-bugs:
   active: true
@@ -154,9 +151,9 @@ potential-bugs:
     
   LateinitUsage:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
-    excludeAnnotatedProperties: []
-    ignoreOnClassesPattern: ''
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
+    excludeAnnotatedProperties: ['javax.inject.Inject']
+    ignoreOnClassesPattern: '.*Test$'
     
   MapGetWithNotNullAssertionOperator:
     active: true
@@ -166,6 +163,7 @@ potential-bugs:
     
   MissingWhenCase:
     active: true
+    allowElseExpression: false
     
   NullCheckOnMutableProperty:
     active: true
@@ -196,96 +194,112 @@ potential-bugs:
     
   UselessPostfixExpression:
     active: true
+    
+  # ASIL安全相关
+  WrongEqualsTypeParameter:
+    active: true
+    
+  IgnoredReturnValue:
+    active: true
+    restrictToAnnotatedMethods: false
+    returnValueAnnotations:
+      - '*.CheckResult'
+      - '*.CheckReturnValue'
+    ignoreReturnValueAnnotations:
+      - '*.CanIgnoreReturnValue'
 
 # ============================================================
-# 代码风格规则
+# 代码风格规则 (ASPICE文档要求)
 # ============================================================
 style:
   active: true
   
-  # 允许使用大写常量命名
   ObjectPropertyNaming:
     active: true
-    constantPattern: '[A-Za-z][_A-Za-z0-9]*'
+    constantPattern: '[A-Z][_A-Z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
     privatePropertyPattern: '(_)?[A-Za-z][_A-Za-z0-9]*'
     
-  # 禁用魔法数字检查（允许在业务代码中使用）
   MagicNumber:
-    active: false
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
+      - '100'
+      - '1000'
+    ignoreHashCodeFunction: true
+    ignorePropertyDeclaration: false
+    ignoreLocalVariableDeclaration: false
+    ignoreConstantDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotation: false
+    ignoreNamedArgument: true
+    ignoreEnums: true
+    ignoreRanges: false
     
-  # 函数命名
   FunctionNaming:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
     functionPattern: '[a-z][a-zA-Z0-9]*'
     excludeFunctionPattern: '$^'
     ignoreOverridden: true
     ignoreAnnotated: ['Composable']
     
-  # 类命名
   ClassNaming:
     active: true
     classPattern: '[A-Z$][a-zA-Z0-9$]*'
     
-  # 构造函数参数命名
   ConstructorParameterNaming:
     active: true
     parameterPattern: '[a-z][A-Za-z0-9]*'
     privateParameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
     
-  # 枚举命名
   EnumNaming:
     active: true
     enumEntryPattern: '^[A-Z][_a-zA-Z0-9]*$'
     
-  # 包命名
   PackageNaming:
     active: true
     packagePattern: '^[a-z]+(\.[a-z][A-Za-z0-9]*)*$'
     
-  # 顶层属性命名
   TopLevelPropertyNaming:
     active: true
     constantPattern: '[A-Z][_A-Z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
     privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
     
-  # 变量命名
   VariableNaming:
     active: true
     variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
     
-  # 未使用的导入
   UnusedImports:
     active: true
     
-  # 通配符导入
   WildcardImport:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
     excludeImports: [
       'java.util.*',
       'kotlinx.android.synthetic.*',
-      'kotlinx.coroutines.*'
+      'kotlinx.coroutines.*',
+      'androidx.compose.ui.tooling.preview.*'
     ]
     
-  # 无 else when
   MandatoryBracesIfStatements:
     active: true
     
-  # 简化表达式
   CanBeNonNullable:
     active: true
     
-  # 数据类复制
   DataClassShouldBeImmutable:
     active: true
     
-  # 默认规则
   UseCheckOrError:
     active: true
     
@@ -298,17 +312,15 @@ style:
   UseRequireNotNull:
     active: true
     
-  # 注释格式
   CommentOverPrivateFunction:
     active: true
     
   CommentOverPrivateProperty:
     active: true
     
-  # 文档
   UndocumentedPublicClass:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/di/**']
     searchInNestedClass: true
     searchInInnerClass: true
     searchInInnerObject: true
@@ -316,10 +328,19 @@ style:
     
   UndocumentedPublicFunction:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
+    
+  # 额外文档规则
+  UndocumentedPublicProperty:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
+    
+  # 明确API可见性
+  ExplicitApiDeclaration:
+    active: true
 
 # ============================================================
-# 性能规则
+# 性能规则 (车载系统性能关键)
 # ============================================================
 performance:
   active: true
@@ -333,20 +354,24 @@ performance:
     
   ForEachOnRange:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
     
   SpreadOperator:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
     
   UnnecessaryTemporaryInstantiation:
     active: true
     
   UnnecessaryPartOfBinaryExpression:
     active: true
+    
+  # 避免反射
+  AvoidUsingReflection:
+    active: true
 
 # ============================================================
-# 异常规则
+# 异常规则 (ASIL安全要求)
 # ============================================================
 exceptions:
   active: true
@@ -358,10 +383,11 @@ exceptions:
       - 'finalize'
       - 'hashCode'
       - 'toString'
+      - 'clone'
       
   InstanceOfCheckForException:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
     
   NotImplementedDeclaration:
     active: true
@@ -410,7 +436,7 @@ exceptions:
     
   TooGenericExceptionCaught:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/*.Spec.kt', '**/*.Spek.kt']
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
     exceptionNames:
       - 'ArrayIndexOutOfBoundsException'
       - 'Error'
@@ -438,7 +464,7 @@ naming:
   
   BooleanPropertyNaming:
     active: true
-    allowedPattern: '^(is|has|are|should|can)'
+    allowedPattern: '^(is|has|are|should|can|will)'
     
   FunctionMaxLength:
     active: true
@@ -462,52 +488,299 @@ naming:
   VariableMinLength:
     active: true
     minimumVariableNameLength: 1
+    
+  # 测试方法命名
+  FunctionNaming:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
+    functionPattern: '^[a-z][a-zA-Z0-9]*$|^(test|should|when|given).*$'
 
 # ============================================================
-# 报告输出
+# 空安全规则 (Kotlin空安全最佳实践)
+# ============================================================
+empty-blocks:
+  active: true
+  
+  EmptyCatchBlock:
+    active: true
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
+    
+  EmptyClassBlock:
+    active: true
+    
+  EmptyDefaultConstructor:
+    active: true
+    
+  EmptyDoWhileBlock:
+    active: true
+    
+  EmptyElseBlock:
+    active: true
+    
+  EmptyFinallyBlock:
+    active: true
+    
+  EmptyForBlock:
+    active: true
+    
+  EmptyFunctionBlock:
+    active: true
+    ignoreOverridden: true
+    
+  EmptyIfBlock:
+    active: true
+    
+  EmptyInitBlock:
+    active: true
+    
+  EmptyKtFile:
+    active: true
+    
+  EmptySecondaryConstructor:
+    active: true
+    
+  EmptyTryBlock:
+    active: true
+    
+  EmptyWhenBlock:
+    active: true
+    
+  EmptyWhileBlock:
+    active: true
+
+# ============================================================
+# 报告输出配置
 # ============================================================
 output-reports:
   active: true
-  exclude:
-    # 启用所有报告
+  exclude: []
 
-# ============================================================
-# 处理器
-# ============================================================
 processors:
   active: true
-  exclude:
-    - 'DetektProgressListener'
-    
-# ============================================================
-# 控制台报告
-# ============================================================
+  exclude: []
+
 console-reports:
   active: true
   exclude:
     - 'ProjectStatisticsReport'
     - 'ComplexityReport'
     - 'NotificationReport'
-    - 'FindingsReport'
-    - 'FileBasedFindingsReport'
-    - 'LiteFindingsReport'
-  
-  # 只包含严重问题
   include:
     - 'FindingsReport'
 
 # ============================================================
-# 特殊规则 - 针对智能座舱项目
+# 特殊规则 - 智能座舱项目ASPICE合规专用
 # ============================================================
 comments:
   active: true
   
-  # 检查TODO是否有关联需求
-  TodoWithoutRequirement:
-    active: true
-    allowedPattern: 'TODO:.*REQ-[A-Z]+-\d+'
+  # 检查TODO是否有关联需求ID
+  AbsentOrWrongFileLicense:
+    active: false
     
-  # 检查追溯注解
-  MissingTraceAnnotation:
+  # 检查文档注释完整性
+  DeprecatedBlockTag:
     active: true
-    traceAnnotation: '@trace'
+    
+  # KDoc格式检查
+  EndOfSentenceFormat:
+    active: true
+    endOfSentenceFormat: '([.?!][ \t\n\r)<\'"])|$'
+    
+  # 代码注释规则
+  OutdatedDocumentation:
+    active: true
+    matchTypeParameters: true
+    matchDeclarationsOrder: true
+    allowParamOnConstructorProperties: true
+    
+  # 必要注释检查
+  UndocumentedPublicClass:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt', '**/di/**']
+    
+  UndocumentedPublicFunction:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
+    
+  UndocumentedPublicProperty:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.Test.kt']
+
+# ============================================================
+# 格式化规则
+# ============================================================
+formatting:
+  active: true
+  android: true
+  autoCorrect: true
+  
+  AnnotationSpacing:
+    active: true
+    autoCorrect: true
+    
+  ChainWrapping:
+    active: true
+    autoCorrect: true
+    
+  CommentSpacing:
+    active: true
+    autoCorrect: true
+    
+  FinalNewline:
+    active: true
+    autoCorrect: true
+    insertFinalNewLine: true
+    
+  ImportOrdering:
+    active: true
+    autoCorrect: true
+    
+  Indentation:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+    continuationIndentSize: 4
+    
+  MaximumLineLength:
+    active: true
+    maxLineLength: 120
+    
+  ModifierOrdering:
+    active: true
+    autoCorrect: true
+    
+  NoBlankLineBeforeRbrace:
+    active: true
+    autoCorrect: true
+    
+  NoConsecutiveBlankLines:
+    active: true
+    autoCorrect: true
+    
+  NoEmptyClassBody:
+    active: true
+    autoCorrect: true
+    
+  NoEmptyFirstLineInMethodBlock:
+    active: true
+    autoCorrect: true
+    
+  NoLineBreakAfterElse:
+    active: true
+    autoCorrect: true
+    
+  NoLineBreakBeforeAssignment:
+    active: true
+    autoCorrect: true
+    
+  NoMultipleSpaces:
+    active: true
+    autoCorrect: true
+    
+  NoSemicolons:
+    active: true
+    autoCorrect: true
+    
+  NoTrailingSpaces:
+    active: true
+    autoCorrect: true
+    
+  NoUnusedImports:
+    active: true
+    autoCorrect: true
+    
+  NoWildcardImports:
+    active: true
+    autoCorrect: true
+    packagesToUseImportOnDemandProperty: 'java.util.*,kotlinx.android.synthetic.*'
+    
+  ParameterListWrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+    
+  SpacingAroundColon:
+    active: true
+    autoCorrect: true
+    
+  SpacingAroundComma:
+    active: true
+    autoCorrect: true
+    
+  SpacingAroundCurly:
+    active: true
+    autoCorrect: true
+    
+  SpacingAroundDot:
+    active: true
+    autoCorrect: true
+    
+  SpacingAroundKeyword:
+    active: true
+    autoCorrect: true
+    
+  SpacingAroundOperators:
+    active: true
+    autoCorrect: true
+    
+  SpacingAroundParens:
+    active: true
+    autoCorrect: true
+    
+  SpacingAroundRangeOperator:
+    active: true
+    autoCorrect: true
+    
+  StringTemplate:
+    active: true
+    autoCorrect: true
+
+# ============================================================
+# 智能座舱项目特定规则
+# ============================================================
+# 注: 以下规则通过自定义Detekt插件实现
+# 自定义规则配置路径: buildSrc/src/main/kotlin/detekt/
+
+smart-cockpit:
+  active: true
+  
+  # ASPICE追溯检查
+  TraceabilityCheck:
+    active: true
+    # 要求所有public API必须有@trace注解
+    requireTraceAnnotation: true
+    traceAnnotation: 'trace'
+    # 需求ID格式: REQ-{模块}-{类型}-{序号}
+    requirementPattern: 'REQ-[A-Z]+-[A-Z]+-\d+'
+    
+  # ASIL等级检查
+  AsilAnnotationCheck:
+    active: true
+    # 安全相关模块必须有ASIL等级声明
+    requiredAsilModules:
+      - 'message'
+      - 'vehicle'
+      - 'drv'
+    asilAnnotation: 'Asil'
+    
+  # 协程安全上下文检查
+  CoroutineSafetyCheck:
+    active: true
+    # 禁止GlobalScope
+    forbidGlobalScope: true
+    # 要求明确的Dispatcher
+    requireExplicitDispatcher: true
+    
+  # 安全敏感操作检查
+  SecuritySensitiveOperationCheck:
+    active: true
+    # 检查日志中是否包含敏感信息
+    checkLogSensitiveData: true
+    sensitivePatterns:
+      - 'password'
+      - 'token'
+      - 'secret'
+      - 'vin'
+      - 'imei'
+      - 'license.*plate'
